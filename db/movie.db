@@ -1,0 +1,80 @@
+CREATE TABLE Rating (
+    id INTEGER PRIMARY KEY,
+    rating TEXT
+);
+
+CREATE TABLE Genre (
+    id INTEGER PRIMARY KEY,
+    genre TEXT
+);
+
+CREATE TABLE Company (
+    id INTEGER PRIMARY KEY,
+    company TEXT
+);
+
+CREATE TABLE Country (
+    id INTEGER PRIMARY KEY,
+    country TEXT
+);
+
+CREATE TABLE Director (
+    id INTEGER PRIMARY KEY,
+    director TEXT
+);
+
+CREATE TABLE Star (
+    id INTEGER PRIMARY KEY,
+    star TEXT
+);
+
+CREATE TABLE Writer (
+    id INTEGER PRIMARY KEY,
+    writer TEXT
+);
+
+CREATE TABLE Film (
+    id INTEGER PRIMARY KEY,
+    rating_id INTEGER,
+    genre_id INTEGER,
+    company_id INTEGER,
+    country_id INTEGER,
+    director_id INTEGER,
+    star_id INTEGER,
+    writer_id INTEGER,
+    budget REAL,
+    runtime REAL,
+    score REAL,
+    votes REAL,
+    FOREIGN KEY (rating_id) REFERENCES Rating(id),
+    FOREIGN KEY (genre_id) REFERENCES Genre(id),
+    FOREIGN KEY (company_id) REFERENCES Company(id),
+    FOREIGN KEY (country_id) REFERENCES Country(id),
+    FOREIGN KEY (director_id) REFERENCES Director(id),
+    FOREIGN KEY (star_id) REFERENCES Star(id),
+    FOREIGN KEY (writer_id) REFERENCES Writer(id)
+);
+
+INSERT INTO Rating (rating) SELECT DISTINCT rating FROM movies
+INSERT INTO Genre (genre) SELECT DISTINCT genre FROM movies
+INSERT INTO Company (company) SELECT DISTINCT company FROM movies
+INSERT INTO Country (country) SELECT DISTINCT country FROM movies
+INSERT INTO Director (director) SELECT DISTINCT director FROM movies
+INSERT INTO Star (star) SELECT DISTINCT star FROM movies
+INSERT INTO Writer (writer) SELECT DISTINCT writer FROM movies
+
+INSERT INTO Film (rating_id, genre_id, company_id, country_id, director_id, star_id, writer_id, budget, runtime, score, votes)
+SELECT 
+    (SELECT id FROM Rating WHERE rating = movies.rating),
+    (SELECT id FROM Genre WHERE genre = movies.genre),
+    (SELECT id FROM Company WHERE company = movies.company),
+    (SELECT id FROM Country WHERE country = movies.country),
+    (SELECT id FROM Director WHERE director = movies.director),
+    (SELECT id FROM Star WHERE star = movies.star),
+    (SELECT id FROM Writer WHERE writer = movies.writer),
+    movies.budget,
+    movies.runtime,
+    movies.score,
+    movies.votes
+FROM movies;
+
